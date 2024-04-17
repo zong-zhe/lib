@@ -1,21 +1,6 @@
 name: java-test
 
-on:
-  push:
-    branches:
-      - main
-      - master
-    tags:
-      - '*'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "java/**"
-  workflow_dispatch:
-
-permissions:
-  contents: read
+on: push
 
 jobs:
   test:
@@ -84,14 +69,17 @@ jobs:
         run: make test
       - name: 'Build and Deploy'
         shell: bash
-        working-directory: java
-        run: mvn clean install -DskipTests -Dcargo-build.profile=release -Djni.classifier=${{ matrix.classifier }} # && make deploy
+        working-directory: ./java
+        run: mvn clean package verify org.sonatype.plugins:nexus-staging-maven-plugin:deploy \
+              -DskipTests=true \
+              -DaltStagingDirectory=local-staging \
+              -DskipRemoteStaging=true
         env:
           CI_DEPLOY_USERNAME: ${{ secrets.NEXUS_STAGE_DEPLOYER_USER }}
           CI_DEPLOY_PASSWORD: ${{ secrets.NEXUS_STAGE_DEPLOYER_PW }}
-      - name: 'Upload artifact'
+      - name: Upload local staging directory
         uses: actions/upload-artifact@v3
         with:
-          name: java-artifact-${{ matrix.classifier }}
-          path: |
-            java/target/*.jar
+          name: ${{ matrix.classifier }}-local-staging
+          path: java/local-staging
+          if-no-files-found: error
