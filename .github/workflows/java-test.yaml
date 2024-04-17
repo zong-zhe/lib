@@ -70,10 +70,8 @@ jobs:
       - name: 'Build and Deploy'
         shell: bash
         working-directory: ./java
-        run: mvn clean package verify org.sonatype.plugins:nexus-staging-maven-plugin:deploy \
-              -DskipTests=true \
-              -DaltStagingDirectory=local-staging \
-              -DskipRemoteStaging=true
+        run: |
+          mvn clean package verify org.sonatype.plugins:nexus-staging-maven-plugin:deploy -DskipTests=true -DaltStagingDirectory=local-staging -DskipRemoteStaging=true
         env:
           CI_DEPLOY_USERNAME: ${{ secrets.NEXUS_STAGE_DEPLOYER_USER }}
           CI_DEPLOY_PASSWORD: ${{ secrets.NEXUS_STAGE_DEPLOYER_PW }}
