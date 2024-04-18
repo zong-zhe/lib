@@ -80,7 +80,8 @@ jobs:
       - name: Build and Deploy
         run: mvn -B deploy --file pom.xml
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_USERNAME: ${{ github.actor }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         working-directory: java
       - name: 'Upload artifact'
         uses: actions/upload-artifact@v3
