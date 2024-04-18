@@ -80,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.classifier }}-local-staging
-          path: java/target/*-${{ matrix.classifier }}-*.jar
+          path: java/target/*-${{ matrix.classifier }}.jar
           if-no-files-found: error
 
       - name: Download windows staging directory
