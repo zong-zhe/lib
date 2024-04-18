@@ -65,51 +65,26 @@ jobs:
           sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
           # Setup for cargo
           echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+
       - name: 'Test'
         shell: bash
         working-directory: java
         run: make test
-      - name: 'Build and Deploy'
+
+      - name: 'Build'
         shell: bash
         working-directory: java
-        run: mvn clean package -DskipTests -Dcargo-build.profile=release -Djni.classifier=${{ matrix.classifier }} # && make deploy
+        run: mvn clean package -DskipTests -Dcargo-build.profile=release -Djni.classifier=${{ matrix.classifier }}
+
+      - name: Deploy to GitHub Packages
+        run: |
+          mvn deploy:deploy-file -Dfile=target/*-${{ matrix.classifier }}.jar \
+          -Dclassifier=${{ matrix.classifier }} \
+          -Dpackaging=jar \
+          -DrepositoryId=github \
+          -Durl=https://maven.pkg.github.com/zong-zhe/test -s settings.xml
         env:
-          CI_DEPLOY_USERNAME: ${{ secrets.NEXUS_STAGE_DEPLOYER_USER }}
-          CI_DEPLOY_PASSWORD: ${{ secrets.NEXUS_STAGE_DEPLOYER_PW }}
-      - name: Upload local staging directory
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.classifier }}-local-staging
-          path: java/target/*-${{ matrix.classifier }}.jar
-          if-no-files-found: error
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: java
 
-  test1:
-    runs-on: ubuntu-latest
-    needs: [ test ]
-    steps:
-    - name: Download windows staging directory
-      uses: actions/download-artifact@v3
-      with:
-        name: linux-x86_64-local-staging
-        path: ~/linux-x86_64-local-staging
-
-    - name: Deploy to GitHub Packages
-      run: |
-        mvn deploy:deploy-file -Dfile=~/windows-x86_64-local-staging/*.jar -DgroupId=com.mycompany -DartifactId=myartifact -Dversion=1.0 -Dpackaging=jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/zong-zhe/lib \
-      env:
-        GITHUB_USERNAME: ${{ github.actor }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      working-directory: java
-
-    - name: Deploy
-      run: mvn deploy -s settings.xml -DskipTests
-      env:
-        GITHUB_USERNAME: ${{ github.actor }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      working-directory: java
-    - name: 'Upload artifact'
-      uses: actions/upload-artifact@v3
-      with:
-        name: java-artifact-${{ matrix.classifier }}
-        path: |
-          java/target/*.jar
