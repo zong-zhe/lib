@@ -83,6 +83,26 @@ jobs:
           path: java/target/*-${{ matrix.classifier }}-*.jar
           if-no-files-found: error
 
+      - name: Download windows staging directory
+        uses: actions/download-artifact@v3
+        with:
+            name: windows-x86_64-local-staging
+            path: ~/windows-x86_64-local-staging
+
+      - name: Download windows staging directory
+        uses: actions/download-artifact@v3
+        with:
+            name: osx-x86_64-local-staging
+            path: ~/osx-x86_64-local-staging
+
+      - name: Deploy to GitHub Packages
+        run: |
+            mvn deploy:deploy-file -Dfile=~/windows-x86_64-local-staging/*.jar -DgroupId=com.mycompany -DartifactId=myartifact -Dversion=1.0 -Dpackaging=jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/zong-zhe/lib \
+        env:
+            GITHUB_USERNAME: ${{ github.actor }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: java
+
       - name: Deploy
         run: mvn deploy -s settings.xml -DskipTests
         env:
