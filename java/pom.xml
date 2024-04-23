@@ -249,7 +249,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/kcl-lang/lib</url>
+            <url>https://maven.pkg.github.com/zong-zhe/lib</url>
         </repository>
     </distributionManagement>
 </project>
