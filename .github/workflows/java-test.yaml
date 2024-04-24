@@ -61,7 +61,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install rust nightly toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: 1.77
           override: true

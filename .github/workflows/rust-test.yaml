@@ -1,14 +1,6 @@
 name: rust-test
 
-on:
-  push:
-    branches:
-      - main
-      - master
-    tags:
-      - '*'
-  pull_request:
-  workflow_dispatch:
+on: push
 
 permissions:
   contents: read
@@ -23,7 +15,7 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
       - name: Install rust nightly toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: 1.77
           override: true
