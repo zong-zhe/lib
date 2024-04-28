@@ -117,7 +117,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [ test, build-on-centos ]
     steps:
       - uses: actions/checkout@v4
