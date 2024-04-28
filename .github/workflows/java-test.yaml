@@ -11,10 +11,10 @@ jobs:
     strategy:
       matrix:
         include:
-          # - os: ubuntu-latest
-          #   classifier: linux-x86_64
-          #   java: 8
-          #   root-pom: 'pom.xml'
+          - os: ubuntu-latest
+            classifier: linux-x86_64
+            java: 8
+            root-pom: 'pom.xml'
           - os: ubuntu-latest
             classifier: linux-aarch_64
             java: 8
@@ -84,12 +84,12 @@ jobs:
       - name: 'Test'
         shell: bash
         working-directory: java
-        run: make test
+        run: gcc --version && make test
 
       - name: 'Build and Deploy'
         shell: bash
         working-directory: java
-        run: mvn clean package -DskipTests=true -Djni.classifier=${{ matrix.classifier }} -Dcargo-build.profile=release
+        run: gcc --version && mvn clean package -DskipTests=true -Djni.classifier=${{ matrix.classifier }} -Dcargo-build.profile=release
 
       - name: 'Upload artifact'
         uses: actions/upload-artifact@v3
@@ -176,7 +176,7 @@ jobs:
     - name: 'Upload artifact'
       uses: actions/upload-artifact@v3
       with:
-        name: kcl-lib-linux-x86_64
+        name: kcl-lib-linux-x86_64-c
         path: java/target/classes/native
 
         
