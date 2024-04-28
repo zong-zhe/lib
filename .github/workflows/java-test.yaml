@@ -151,7 +151,7 @@ jobs:
     - name: 'Upload artifact'
       uses: actions/upload-artifact@v3
       with:
-        name: kcl-lib-linux-x86_64
+        name: kcl-lib-linux-x86_64-C
         path: java/target/classes/native
 
         
@@ -176,7 +176,7 @@ jobs:
       - name: Download windows x86_64 lib
         uses: actions/download-artifact@v3
         with:
-          name: kcl-lib-windows-x86_64
+          name: kcl-lib-windows-x86_64-C
           path: java/native
 
       - name: Download linux x86_64 lib
