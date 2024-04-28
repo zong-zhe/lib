@@ -11,10 +11,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
-            classifier: linux-x86_64
-            java: 8
-            root-pom: 'pom.xml'
+          # - os: ubuntu-latest
+          #   classifier: linux-x86_64
+          #   java: 8
+          #   root-pom: 'pom.xml'
           - os: ubuntu-latest
             classifier: linux-aarch_64
             java: 8
@@ -169,7 +169,7 @@ jobs:
     - name: 'Upload artifact'
       uses: actions/upload-artifact@v3
       with:
-        name: kcl-lib-linux-x86_64-c
+        name: kcl-lib-linux-x86_64
         path: java/target/classes/native
 
         
