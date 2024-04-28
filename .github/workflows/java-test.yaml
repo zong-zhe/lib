@@ -131,12 +131,22 @@ jobs:
     - name: 'Test'
       shell: bash
       working-directory: java
-      run: source /opt/rh/devtoolset-10/enable && gcc --version && make test
+      run: |
+        source /opt/rh/devtoolset-10/enable && \
+        export CFLAGS="$CFLAGS -include ../.github/centos7/force_link_glibc_2.17.h" && \
+        export CXXFLAGS="$CXXFLAGS -include ../.github/centos7/force_link_glibc_2.17.h" && \
+        gcc --version && \ 
+        make test
 
     - name: 'Build and Deploy'
       shell: bash
       working-directory: java
-      run: source /opt/rh/devtoolset-10/enable && gcc --version && mvn clean package -DskipTests=true -Djni.classifier=linux-x86_64 -Dcargo-build.profile=release
+      run: |
+        source /opt/rh/devtoolset-10/enable && \
+        export CFLAGS="$CFLAGS -include ../.github/centos7/force_link_glibc_2.17.h" && \
+        export CXXFLAGS="$CXXFLAGS -include ../.github/centos7/force_link_glibc_2.17.h" && \
+        gcc --version && \
+        mvn clean package -DskipTests=true -Djni.classifier=linux-x86_64 -Dcargo-build.profile=release
 
     - name: 'Upload artifact'
       uses: actions/upload-artifact@v3
