@@ -135,7 +135,7 @@ jobs:
         source /opt/rh/devtoolset-10/enable && \
         export CFLAGS="$CFLAGS -include ../.github/centos7/force_link_glibc_2.17.h" && \
         export CXXFLAGS="$CXXFLAGS -include ../.github/centos7/force_link_glibc_2.17.h" && \
-        gcc --version && \ 
+        gcc --version && \
         make test
 
     - name: 'Build and Deploy'
