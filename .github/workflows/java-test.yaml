@@ -80,42 +80,11 @@ jobs:
     name: Build on CentOS 7
     runs-on: ubuntu-latest
     container:
-      image: "centos:7"
+      image: ghcr.io/zong-zhe/centos7:0.1.0
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-
-    - name: Prepare build environment
-      run: |
-        yum makecache
-        yum install -y wget
-        yum install -y make
-        yum install -y epel-release
-        yum install -y llvm clang llvm-devel
-        yum install gcc gcc-c++ glibc-static -y 
-        cat /etc/os-release
-
-    - name: Install Python 3
-      run: |
-        yum install -y python3 python3-devel python3-pip
-    
-    - name: Install Rust
-      run: |
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-        mv $HOME/.cargo/bin/* /usr/bin/
-        rustc --version
-        cargo --version
-
-    - name: Install Java and Maven
-      run: |
-        yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel
-        wget https://repo.huaweicloud.com/apache/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
-        tar -xzf apache-maven-*.tar.gz
-        mkdir p /opt/maven
-        mv apache-maven-* /opt/maven
-        ln -s /opt/maven/apache-maven-3.9.6/bin/mvn /usr/bin/mvn
-        mvn --version
 
     - name: Verify installed versions
       run: |
