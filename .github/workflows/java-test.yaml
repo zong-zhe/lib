@@ -122,7 +122,6 @@ jobs:
 
     - name: Verify installed versions
       run: |
-        gcc --version
         llvm-config --version
         python3 --version
         rustc --version
