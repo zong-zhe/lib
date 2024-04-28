@@ -87,7 +87,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Test and Build
+    - name: Prepare build environment
       run: |
         yum makecache
         yum install -y centos-release-scl-rh centos-release-scl
@@ -131,7 +131,7 @@ jobs:
     - name: 'Test'
       shell: bash
       working-directory: java
-      run: make test
+      run: source /opt/rh/devtoolset-10/enable && gcc --version && make test
 
     - name: 'Build and Deploy'
       shell: bash
