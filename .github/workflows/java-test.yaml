@@ -12,6 +12,10 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
+            classifier: linux-x86_64
+            java: 8
+            root-pom: 'pom.xml'
+          - os: ubuntu-latest
             classifier: linux-aarch_64
             java: 8
             root-pom: 'pom.xml'
@@ -51,6 +55,11 @@ jobs:
           override: true
           components: clippy, rustfmt
 
+      - name: 'Test'
+        shell: bash
+        working-directory: java
+        run: gcc --version
+
       - name: Setup linux-aarch_64 rust target
         if: "contains(matrix.classifier, 'linux-aarch_64')"
         run: |
@@ -62,12 +71,17 @@ jobs:
       - name: 'Test'
         shell: bash
         working-directory: java
-        run: make test
+        run: |
+          export CFLAGS="$CFLAGS -include ../.github/centos7/force_link_glibc_2.17.h" && \
+          export CXXFLAGS="$CXXFLAGS -include ../.github/centos7/force_link_glibc_2.17.h" && \
+          make test
 
       - name: 'Build and Deploy'
         shell: bash
         working-directory: java
         run: |
+            export CFLAGS="$CFLAGS -include ../.github/centos7/force_link_glibc_2.17.h" && \
+            export CXXFLAGS="$CXXFLAGS -include ../.github/centos7/force_link_glibc_2.17.h" && \
             mvn clean package -DskipTests=true -Djni.classifier=${{ matrix.classifier }} -Dcargo-build.profile=release
 
       - name: 'Upload artifact'
@@ -151,7 +165,7 @@ jobs:
     - name: 'Upload artifact'
       uses: actions/upload-artifact@v3
       with:
-        name: kcl-lib-linux-x86_64
+        name: kcl-lib-linux-x86_64-c
         path: java/target/classes/native
 
         
