@@ -111,6 +111,7 @@ jobs:
         source /opt/rh/devtoolset-10/enable
         gcc --version
         cat /etc/os-release
+        uname -m
 
     - name: Install Python 3
       run: |
