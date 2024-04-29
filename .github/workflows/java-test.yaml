@@ -89,7 +89,7 @@ jobs:
     - name: 'Test'
       shell: bash
       working-directory: java
-      run: make test
+      run: mvn clean test
 
     - name: 'Build and Deploy'
       shell: bash
