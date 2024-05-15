@@ -37,13 +37,15 @@ use anyhow::Result;
 pub type API = KclvmServiceImpl;
 
 pub fn call<'a>(name: &'a [u8], args: &'a [u8]) -> Result<&'a [u8]> {
+    let mut result_len: usize = 0;
     let result_ptr = {
         let args = CString::new(args)?;
         let call = CString::new(name)?;
         let serv = kclvm_service_new(0);
-        let mut result_len: usize = 0;
         kclvm_service_call_with_length(serv, call.as_ptr(), args.as_ptr(), &mut result_len)
     };
-    let result = unsafe { CStr::from_ptr(result_ptr) };
-    Ok(result.to_bytes())
+    // let result = unsafe { CStr::from_ptr(result_ptr) };
+    let result_slice = unsafe { std::slice::from_raw_parts(result_ptr as *const u8, result_len + 1) }; // 包含 null 字符
+    let result_cstr = CStr::from_bytes_with_nul(result_slice)?;
+    Ok(result_cstr.to_bytes())
 }
