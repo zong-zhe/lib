@@ -26,7 +26,7 @@
 //! }
 //! ```
 
-use std::ffi::{CStr, CString};
+use std::ffi::CString;
 
 pub use kclvm_api::gpyrpc::*;
 use kclvm_api::service::capi::{kclvm_service_call_with_length, kclvm_service_new};
@@ -36,7 +36,7 @@ use anyhow::Result;
 
 pub type API = KclvmServiceImpl;
 
-pub fn call<'a>(name: &'a [u8], args: &'a [u8]) -> Result<&'a [u8]> {
+pub fn call<'a>(name: &'a [u8], args: &'a [u8]) -> Result<Vec<u8>> {
     let mut result_len: usize = 0;
     let result_ptr = {
         let args = CString::new(args)?;
@@ -45,7 +45,13 @@ pub fn call<'a>(name: &'a [u8], args: &'a [u8]) -> Result<&'a [u8]> {
         kclvm_service_call_with_length(serv, call.as_ptr(), args.as_ptr(), &mut result_len)
     };
     // let result = unsafe { CStr::from_ptr(result_ptr) };
-    let result_slice = unsafe { std::slice::from_raw_parts(result_ptr as *const u8, result_len + 1) }; // 包含 null 字符
-    let result_cstr = CStr::from_bytes_with_nul(result_slice)?;
-    Ok(result_cstr.to_bytes())
+    let result = unsafe { 
+        let mut dest_data: Vec<u8> = Vec::with_capacity(result_len);
+        let dest_ptr: *mut u8 = dest_data.as_mut_ptr();
+        std::ptr::copy_nonoverlapping(result_ptr as *const u8, dest_ptr, result_len);
+        dest_data.set_len(result_len);
+        dest_data
+    }; 
+
+    Ok(result)
 }
