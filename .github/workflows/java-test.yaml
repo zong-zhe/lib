@@ -1,18 +1,18 @@
 name: java-test
 
-on:
-  push:
-    branches:
-      - main
-      - master
-    tags:
-      - '*'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "java/**"
-  workflow_dispatch:
+on: push
+  # push:
+  #   branches:
+  #     - main
+  #     - master
+  #   tags:
+  #     - '*'
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "java/**"
+  # workflow_dispatch:
 
 jobs:
   test-and-build:
@@ -130,7 +130,7 @@ jobs:
       - name: Package Java artifact
         working-directory: java
         run: |
-          rustup default stable && mvn package -DskipTests=true
+          rustup default stable && mvn package -DskipTests=true -Dcargo-build.profile=release
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
